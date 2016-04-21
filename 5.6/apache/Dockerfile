@@ -6,3 +6,6 @@ RUN apt-get update \
 RUN apt-get install -y libmagickwand-dev --no-install-recommends \
     && pecl install imagick \
     && docker-php-ext-enable imagick
+
+RUN pecl install mongo \
+    && docker-php-ext-enable mongo
