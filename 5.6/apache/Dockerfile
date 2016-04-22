@@ -14,4 +14,6 @@ RUN apt-get install -y libssl-dev \
     && pecl install mongo \
     && docker-php-ext-enable mongo
 
+RUN docker-php-ext-install soap
+
 COPY php.ini /usr/local/etc/php/
