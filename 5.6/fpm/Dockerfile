@@ -10,3 +10,5 @@ RUN apt-get install -y libmagickwand-dev --no-install-recommends \
 RUN apt-get install -y libssl-dev \
     && pecl install mongo \
     && docker-php-ext-enable mongo
+
+COPY php.ini /usr/local/etc/php/
