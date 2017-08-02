@@ -7,8 +7,10 @@ RUN apt-get install -y libmagickwand-dev --no-install-recommends \
     && pecl install imagick \
     && docker-php-ext-enable imagick
 
-RUN pecl install memcache \
-    && docker-php-ext-enable memcache
+RUN apt-get install -y libmemcached-dev \
+    && pecl install memcache \
+    && pecl install memcached-2.2.0 \
+    && docker-php-ext-enable memcache memcached
 
 RUN apt-get install -y libssl-dev \
     && pecl install mongo \
