@@ -1,12 +1,23 @@
 FROM php:7.1-fpm-alpine
 
-RUN apk add --no-cache --virtual build-deps $PHPIZE_DEPS libtool \
-    && apk add --no-cache icu-dev wget \
+ARG MEMCACHED_DEPS="zlib-dev libmemcached-dev cyrus-sasl-dev"
+ARG MONGODB_DEPS="openssl-dev"
+ARG PECL_MODULES="memcached mongodb redis"
 
-    # Use gmagick instead of imagick because of segmentation fault on Alpine
-    && apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ graphicsmagick-dev \
-    && pecl install gmagick-beta redis \
-    && docker-php-ext-enable gmagick redis \
-    && apk del build-deps
+RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
+    && apk add --no-cache --virtual .memcached-deps $MEMCACHED_DEPS \
+    && apk add --no-cache --virtual .mongodb-deps $MONGODB_DEPS \
+        && pecl install $PECL_MODULES \
+    && docker-php-ext-enable $PECL_MODULES \
+    && apk del .phpize-deps .memcached-deps .mongodb-deps \
+    && apk add --no-cache libmemcached openssl
 
-RUN docker-php-ext-install bcmath intl opcache pdo_mysql pcntl
+# Use gmagick instead of imagick because of segmentation fault on Alpine
+RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS libtool \
+    && apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/v3.6/main/ jasper-dev \
+    && apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/v3.6/community/ graphicsmagick-dev \
+    && pecl install gmagick-beta  \
+    && docker-php-ext-enable gmagick \
+    && apk del .phpize-deps
+
+RUN docker-php-ext-install bcmath intl mbstring opcache pdo_mysql pcntl soap
