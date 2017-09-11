@@ -22,7 +22,7 @@ RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS libtool \
     && apk del .phpize-deps
 
 # Built-in modules
-RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS icu-dev libxml2-dev \
-    && docker-php-ext-install bcmath intl mbstring opcache pdo_mysql pcntl soap \
+RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS icu-dev libxml2-dev zlib-dev \
+    && docker-php-ext-install bcmath intl mbstring opcache pdo_mysql pcntl soap zip \
     && apk del .phpize-deps \
     && apk add --no-cache icu
