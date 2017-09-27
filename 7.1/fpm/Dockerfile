@@ -1,7 +1,7 @@
 FROM php:7.1-fpm-alpine
 
 ARG MEMCACHED_DEPS="zlib-dev libmemcached-dev cyrus-sasl-dev"
-ARG MONGODB_DEPS="openssl-dev"
+ARG MONGODB_DEPS="openssl-dev bash"
 ARG PECL_MODULES="memcached mongodb redis"
 
 # PECL modules
@@ -26,3 +26,5 @@ RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS icu-dev libxml2-dev z
     && docker-php-ext-install bcmath intl mbstring opcache pdo_mysql pcntl soap zip \
     && apk del .phpize-deps \
     && apk add --no-cache icu
+
+RUN apk add --no-cache acl
