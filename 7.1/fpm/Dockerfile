@@ -8,7 +8,7 @@ ARG PECL_MODULES="memcached mongodb redis"
 RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS \
     && apk add --no-cache --virtual .memcached-deps $MEMCACHED_DEPS \
     && apk add --no-cache --virtual .mongodb-deps $MONGODB_DEPS \
-        && pecl install $PECL_MODULES \
+    && pecl install $PECL_MODULES \
     && docker-php-ext-enable $PECL_MODULES \
     && apk del .phpize-deps .memcached-deps .mongodb-deps \
     && apk add --no-cache libmemcached openssl
