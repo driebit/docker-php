@@ -1,21 +1,18 @@
-FROM php:5.6-fpm
+FROM php:5.6-fpm-alpine
 
-# httpredir.debian.org/debian fails too often, so replace it with a fixed mirror
-RUN sed -i s#http://httpredir.debian.org#ftp://ftp.nl.debian.org#g /etc/apt/sources.list
+ARG PHP_MODS="bcmath intl mbstring opcache pdo_mysql pcntl zip"
+ARG PHP_MODS_DEPS="icu-dev zlib-dev"
+ARG PHP_RUNTIME_DEPS="icu"
 
-RUN apt-get update \
-    && apt-get install -y zip git libicu-dev wget apt-transport-https \
-    && docker-php-ext-install bcmath intl pdo_mysql pcntl
+RUN apk add --no-cache --virtual .php-mods-dev $PHP_MODS_DEPS \
+    && docker-php-ext-install $PHP_MODS \
+    && apk del .php-mods-dev \
+    && apk add --no-cache --virtual .php-mods-runtime $PHP_RUNTIME_DEPS
 
-RUN apt-get update \
-    && apt-get install -y libmagickwand-dev --no-install-recommends \
-    && pecl install imagick \
-    && docker-php-ext-enable imagick
-
-RUN apt-get install -y libssl-dev \
-    && pecl install mongo \
-    && docker-php-ext-enable mongo
-
-RUN rm -rf /var/lib/apt/lists/*
-
-COPY php.ini /usr/local/etc/php/
+# Use gmagick instead of imagick because of segmentation fault on Alpine
+RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS libtool \
+    && apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/v3.6/main/ jasper-dev \
+    && apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/v3.6/community/ graphicsmagick-dev \
+    && pecl install gmagick-1.1.7RC3 \
+    && docker-php-ext-enable gmagick \
+    && apk del .phpize-deps
