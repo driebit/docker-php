@@ -16,3 +16,5 @@ RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS libtool \
     && pecl install gmagick-1.1.7RC3 \
     && docker-php-ext-enable gmagick \
     && apk del .phpize-deps
+
+COPY php.ini /usr/local/etc/php/
