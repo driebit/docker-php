@@ -27,4 +27,5 @@ RUN apk add --no-cache --virtual .phpize-deps $PHPIZE_DEPS icu-dev libxml2-dev z
     && apk del .phpize-deps \
     && apk add --no-cache icu
 
-RUN apk add --no-cache acl
+# grep to fix '/bin/grep: unrecognized option: extended-regexp' during cache:clear
+RUN apk add --no-cache acl grep
